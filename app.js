@@ -87,9 +87,9 @@ function WasteRecognizer() {
       // ***** INSERISCI QUI L'URL DEL TUO BACKEND NGROK *****
       // Questo URL è TEMPORANEO e cambierà ogni volta che avvii il tunnel Ngrok in Colab!
       // Devi copiare l'URL stampato nel tuo notebook Colab.
-      const NGROK_URL = "https://e599-34-127-0-172.ngrok-free.app/detect"; // Esempio da aggiornare!
+      const URL = "https://progetto-esm.onrender.com/detect"; // Esempio da aggiornare!
 
-      const response = await fetch(NGROK_URL, {
+      const response = await fetch(URL, {
         method: "POST",
         body: formData,
         // Non impostare 'Content-Type', il browser lo gestisce automaticamente con FormData
