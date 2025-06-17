@@ -133,15 +133,6 @@
     <!-- Load your React component JavaScript file -->
     <!-- Make sure app.js is in the same directory as this HTML file -->
     <script src="app.js" type="text/babel"></script>
-    <script>
-    // Esegui appena la pagina si carica
-    window.addEventListener("load", () => {
-    // URL del tuo backend su Render
-    fetch("https://progetto-esm.onrender.com/ping")
-      .then((res) => console.log("Backend svegliato"))
-      .catch((err) => console.warn("Backend non raggiungibile", err));
-    });
-    </script>
 
 
     <!-- Script to render the React component into the 'root' div -->
