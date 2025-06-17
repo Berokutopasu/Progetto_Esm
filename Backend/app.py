@@ -5,6 +5,8 @@ import numpy as np
 from PIL import Image
 import base64
 import io
+import os
+
 from ultralytics import YOLO
 
 # ⚠️ Assicurati che best.pt sia nella stessa cartella o metti il path giusto
