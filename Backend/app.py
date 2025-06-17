@@ -8,7 +8,7 @@ import io
 from ultralytics import YOLO
 
 # ⚠️ Assicurati che best.pt sia nella stessa cartella o metti il path giusto
-model = YOLO("best.pt")
+model = YOLO("best-7.pt")
 
 app = Flask(__name__)
 CORS(app)
