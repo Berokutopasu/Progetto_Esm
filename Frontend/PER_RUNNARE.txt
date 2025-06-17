@@ -1,0 +1,5 @@
+Apri un terminale nella cartella e mettiti:  python -m http.server 3000
+Apri un altro terminale e mettiti:ngrok http --url=neat-ostrich-unique.ngrok-free.app 3000
+Forse devi disabilitare Windows Defender per farlo funzionare
+Password local tunnel: 95.235.195.135
+Per runnare con local tunnel: npx localtunnel --port 3000 --subdomain relifeapp123456323233
