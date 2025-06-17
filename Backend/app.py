@@ -16,6 +16,9 @@ CORS(app)
 def prepare_image(file):
     image = Image.open(file).convert("RGB")
     return image
+@app.route('/ping', methods=['GET'])
+def ping():
+    return jsonify({"status": "awake"}), 200
 
 @app.route("/detect", methods=["POST"])
 def detect():
