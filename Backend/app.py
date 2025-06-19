@@ -13,7 +13,8 @@ from ultralytics import YOLO
 model = YOLO("best-7.pt")
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
+
 
 def prepare_image(file):
     image_original = Image.open(file).convert("RGB")
