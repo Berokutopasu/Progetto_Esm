@@ -16,11 +16,10 @@ app = Flask(__name__)
 CORS(app)
 
 def prepare_image(file):
-    image = Image.open(file).convert("RGB")
-    return image
-@app.route('/ping', methods=['GET'])
-def ping():
-    return jsonify({"status": "awake"}), 200
+    image_original = Image.open(file).convert("RGB")
+    # Ridimensiona immagine per inferenza più veloce (es. 384x384)
+    image_resized = image_original.resize((384, 384))
+    return image_original, image_resized
 
 @app.route("/detect", methods=["POST"])
 def detect():
@@ -31,19 +30,25 @@ def detect():
     print(f"Ricevuto file: {file.filename}")
     
     try:
-        image = prepare_image(file)
+        image_original, image_resized = prepare_image(file)
     except Exception as e:
         print(f"Errore nel caricamento immagine: {e}")
         return jsonify({"error": "Impossibile processare immagine"}), 400
-    # Prosegui con inferenza ...
+    
     print("Inferenza in corso")
-    results = model(image)[0]
+    results = model(image_resized)[0]
     print("Inferenza completata")
+
     boxes = results.boxes
     class_names = model.names
 
     detected_objects = []
-    image_width, image_height = image.size
+
+    orig_w, orig_h = image_original.size
+    resized_w, resized_h = image_resized.size
+
+    scale_x = orig_w / resized_w
+    scale_y = orig_h / resized_h
 
     for box in boxes:
         confidence = float(box.conf.item())
@@ -54,11 +59,17 @@ def detect():
         class_name = class_names[cls_id]
         x1, y1, x2, y2 = box.xyxy[0].tolist()
 
+        # Riporta coordinate all'immagine originale
+        x1_orig = x1 * scale_x
+        y1_orig = y1 * scale_y
+        x2_orig = x2 * scale_x
+        y2_orig = y2 * scale_y
+
         bbox = [
-            x1 / image_width,
-            y1 / image_height,
-            x2 / image_width,
-            y2 / image_height
+            x1_orig / orig_w,
+            y1_orig / orig_h,
+            x2_orig / orig_w,
+            y2_orig / orig_h
         ]
 
         detected_objects.append({
@@ -67,10 +78,10 @@ def detect():
             "bbox": bbox
         })
 
-    # Disegna box sull'immagine
+    # Disegna box sull'immagine originale
     try:
         import cv2
-        draw = np.array(image)
+        draw = np.array(image_original)
         for box in boxes:
             confidence = float(box.conf.item())
             if confidence < 0.5:
@@ -78,15 +89,22 @@ def detect():
 
             cls_id = int(box.cls.item())
             class_name = class_names[cls_id]
-            x1, y1, x2, y2 = [int(x) for x in box.xyxy[0].tolist()]
+            x1, y1, x2, y2 = [int(coord) for coord in box.xyxy[0].tolist()]
+
+            # Riporta coordinate originali
+            x1 = int(x1 * scale_x)
+            y1 = int(y1 * scale_y)
+            x2 = int(x2 * scale_x)
+            y2 = int(y2 * scale_y)
 
             cv2.rectangle(draw, (x1, y1), (x2, y2), (255, 0, 0), 2)
             label = f"{class_name} {confidence:.2f}"
             cv2.putText(draw, label, (x1, y1 - 10),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
         draw = Image.fromarray(draw)
-    except:
-        draw = image
+    except Exception as e:
+        print(f"Errore nel disegno: {e}")
+        draw = image_original
 
     buffer = io.BytesIO()
     draw.save(buffer, format="JPEG")
