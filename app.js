@@ -87,7 +87,7 @@ function WasteRecognizer() {
       // ***** INSERISCI QUI L'URL DEL TUO BACKEND NGROK *****
       // Questo URL è TEMPORANEO e cambierà ogni volta che avvii il tunnel Ngrok in Colab!
       // Devi copiare l'URL stampato nel tuo notebook Colab.
-      const URL = "https://huggingface.co/spaces/Belloctopus/Re-life/detect"; // Esempio da aggiornare!
+      const URL = "https://progetto-esm.onrender.com/detect"; // Esempio da aggiornare!
 
       const response = await fetch(URL, {
         method: "POST",
