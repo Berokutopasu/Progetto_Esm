@@ -22,8 +22,10 @@ def prepare_image(file):
     image_resized = image_original.resize((384, 384))         # ✅ inferenza più veloce
     return image_original, image_resized
 
-@app.route("/detect", methods=["POST"])
+@app.route("/detect", methods=["POST","OPTIONS"])
 def detect():
+    if request.method == "OPTIONS":
+        return '', 200
     if "image" not in request.files:
         return jsonify({"error": "Nessun file ricevuto"}), 400
 
