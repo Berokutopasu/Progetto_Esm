@@ -28,8 +28,15 @@ def detect():
         return jsonify({"error": "Nessun file ricevuto"}), 400
 
     file = request.files["image"]
-    image = prepare_image(file)
-
+    print(f"Ricevuto file: {file.filename}")
+    
+    try:
+        image = prepare_image(file)
+    except Exception as e:
+        print(f"Errore nel caricamento immagine: {e}")
+        return jsonify({"error": "Impossibile processare immagine"}), 400
+    # Prosegui con inferenza ...
+    print("Inferenza in corso")
     results = model(image)[0]
     boxes = results.boxes
     class_names = model.names
