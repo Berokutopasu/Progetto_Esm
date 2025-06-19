@@ -38,6 +38,7 @@ def detect():
     # Prosegui con inferenza ...
     print("Inferenza in corso")
     results = model(image)[0]
+    print("Inferenza completata")
     boxes = results.boxes
     class_names = model.names
 
